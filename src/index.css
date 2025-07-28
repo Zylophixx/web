@@ -86,23 +86,17 @@ html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
-  perspective: 1200px;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  transform-style: preserve-3d;
+  overflow-x: hidden;
 }
 
 /* Enable scrolling and prevent horizontal overflow */
 html {
   overflow-x: hidden;
-  scroll-behavior: smooth;
-  transform-style: preserve-3d;
-  transform-style: preserve-3d;
 }
 
 body {
   overflow-x: hidden;
-  transform-style: preserve-3d;
+  perspective: 1200px;
   transform-style: preserve-3d;
 }
 

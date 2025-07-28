@@ -82,32 +82,39 @@ function App() {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
+      
+      // Calculate scroll progress (0 to 1)
       const scrollProgress = Math.min(scrollY / windowHeight, 1);
       
-      // Background text (Aamir Naqvi) moves up with new section
+      // Background text (Aamir Naqvi) moves up as new section comes up
       if (backgroundTextRef.current) {
-        backgroundTextRef.current.style.transform = `translateY(-${scrollY * 0.8}px) translateZ(20px) rotateX(${scrollProgress * 10}deg)`;
+        const moveUp = scrollY * 0.5;
+        backgroundTextRef.current.style.transform = `translateY(-${moveUp}px) translateZ(20px) rotateX(${scrollProgress * 15}deg)`;
       }
       
       // Portrait moves down slowly (opposite to new section)
       if (portraitRef.current) {
-        portraitRef.current.style.transform = `translateY(${scrollY * 0.3}px) translateZ(100px) rotateY(-${5 + scrollProgress * 10}deg) rotateX(${scrollProgress * 5}deg)`;
+        const moveDown = scrollY * 0.3;
+        portraitRef.current.style.transform = `translateY(${moveDown}px) translateZ(100px) rotateY(-${5 + scrollProgress * 15}deg) rotateX(${scrollProgress * 10}deg)`;
       }
       
-      // Main text moves with slight 3D rotation
+      // Main text moves up with slight 3D rotation
       if (mainTextRef.current) {
-        mainTextRef.current.style.transform = `translateY(-${scrollY * 0.2}px) translateZ(60px) rotateX(${scrollProgress * 8}deg)`;
+        const moveUp = scrollY * 0.4;
+        mainTextRef.current.style.transform = `translateY(-${moveUp}px) translateZ(60px) rotateX(${scrollProgress * 12}deg)`;
       }
       
-      // Triangle moves with enhanced 3D effect
+      // Triangle moves up and rotates
       if (triangleRef.current) {
-        triangleRef.current.style.transform = `translateX(-50%) translateY(-${scrollY * 0.1}px) translateZ(80px) rotateZ(${scrollProgress * 15}deg)`;
+        const moveUp = scrollY * 0.2;
+        triangleRef.current.style.transform = `translateX(-50%) translateY(-${moveUp}px) translateZ(80px) rotateZ(${scrollProgress * 20}deg)`;
       }
       
-      // New section slides up from bottom
+      // New section slides up from bottom - this is the key effect
       if (newSectionRef.current) {
-        const translateY = Math.max(-20, 100 - (scrollY * 0.15));
-        newSectionRef.current.style.transform = `translateY(${translateY}vh) translateZ(50px) rotateX(${Math.max(0, 15 - scrollProgress * 15)}deg)`;
+        // Start at 100vh (completely below screen) and move to 0 as we scroll
+        const translateY = Math.max(0, 100 - (scrollProgress * 100));
+        newSectionRef.current.style.transform = `translateY(${translateY}vh) translateZ(50px) rotateX(${Math.max(0, 20 - scrollProgress * 20)}deg)`;
       }
     };
 
@@ -117,13 +124,13 @@ function App() {
 
   return (
     <div className="relative" style={{ transformStyle: 'preserve-3d', perspective: '1200px' }}>
-      {/* Main Hero Section */}
+      {/* Main Hero Section - Fixed Height */}
       <div 
         ref={heroRef}
-        className="relative min-h-screen w-full overflow-hidden bg-transparent transform-gpu"
+        className="relative h-screen w-full overflow-hidden bg-transparent transform-gpu"
         style={{ transformStyle: 'preserve-3d' }}
       >
-        {/* External Background Image - Fixed */}
+        {/* Fixed Background Image - Never moves */}
         <div 
           className="fixed inset-0 bg-cover bg-center opacity-100 transform-gpu"
           style={{
@@ -137,7 +144,7 @@ function App() {
         {/* Portrait */}
         <div 
           ref={portraitRef}
-          className="absolute inset-0 flex items-center justify-center z-10 transition-transform duration-100 ease-out transform-gpu" 
+          className="absolute inset-0 flex items-center justify-center z-10 transition-transform duration-75 ease-out transform-gpu" 
           style={{ 
             top: '-10%',
             transformStyle: 'preserve-3d',
@@ -146,7 +153,7 @@ function App() {
         >
           <div className="relative transform-gpu" style={{ transformStyle: 'preserve-3d' }}> 
             <div 
-              className="w-96 h-96 md:w-[28rem] md:h-[28rem] lg:w-[32rem] lg:h-[32rem] overflow-hidden opacity-0 animate-fade-in-delayed transform-gpu"
+              className="overflow-hidden opacity-0 animate-fade-in-delayed transform-gpu"
               style={{ 
                 width: '800px',
                 height: '800px', 
@@ -177,7 +184,7 @@ function App() {
         {/* Background Text - Aamir Naqvi */}
         <div 
           ref={backgroundTextRef}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none transition-transform duration-100 ease-out transform-gpu"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none transition-transform duration-75 ease-out transform-gpu"
           style={{ 
             zIndex: 1, 
             top: '65%',
@@ -202,7 +209,7 @@ function App() {
         {/* Main Typography */}
         <div 
           ref={mainTextRef}
-          className="absolute inset-0 flex items-center justify-center transform-gpu"
+          className="absolute inset-0 flex items-center justify-center transition-transform duration-75 ease-out transform-gpu"
           style={{ 
             top: '60%',
             transformStyle: 'preserve-3d',
@@ -247,7 +254,7 @@ function App() {
         </div>
 
         {/* Floating Testimonial Badges */}
-        <div className="fixed inset-0 z-20 pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
+        <div className="absolute inset-0 z-20 pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
           {testimonialBadges.map((badge, index) => (
             <TestimonialBadge key={index} badge={badge} />
           ))}
@@ -256,7 +263,7 @@ function App() {
         {/* Bottom Triangle Shape */}
         <div 
           ref={triangleRef}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 animate-fade-in-delayed z-30 transform-gpu"
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 animate-fade-in-delayed z-30 transition-transform duration-75 ease-out transform-gpu"
           style={{ 
             animationDelay: '3.5s', 
             animationFillMode: 'forwards',
@@ -277,12 +284,12 @@ function App() {
         </div>
       </div>
 
-      {/* New Section Coming from Bottom */}
+      {/* New Section - Slides up from bottom */}
       <div 
         ref={newSectionRef}
-        className="relative min-h-screen w-full bg-gradient-to-br from-gray-900 via-black to-gray-800 transform-gpu"
+        className="relative min-h-screen w-full bg-gradient-to-br from-gray-900 via-black to-gray-800 transition-transform duration-75 ease-out transform-gpu"
         style={{ 
-          transform: 'translateY(100vh) translateZ(50px) rotateX(15deg)',
+          transform: 'translateY(100vh) translateZ(50px) rotateX(20deg)',
           transformStyle: 'preserve-3d',
           zIndex: 40,
           boxShadow: '0 -50px 100px rgba(0,0,0,0.8)'
@@ -329,6 +336,9 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Add more height to enable scrolling */}
+      <div className="h-screen bg-gray-900"></div>
     </div>
   );
 }
